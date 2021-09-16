@@ -20,12 +20,26 @@ class T_Res():
     b1=''
     b2=''
 
-def build_simplex_table(t0, ab, z, a_eq, b_eq, a_ub, b_ub):
+class Table():
+    b=[]
+    x=[]
+    z=[]
+    bazis=[]
+    min=[]
 
-    #построение симплекс таблицы
+def find_ti(ab):
+    if ab==[-float("inf"),  float("inf")]:
+        ti=0
+    if ab[0]==-float("inf"):
+        ti=ab[1]
+    if ab[1]==float("inf"):
+        ti=ab[0]
+    return ti
+
+def build_simplex_table(ab, z, a_eq, b_eq, a_ub, b_ub):
+        #построение симплекс таблицы
     b=b_eq+b_ub
     bazis=[0]*len(b)
-    min=[]
     n=len(b_ub)+len(a_eq[0])
     x=[ [0 for j in range(len(b))] for i in range(n)]
     z_str=[0]*(len(z)+1)
@@ -38,27 +52,29 @@ def build_simplex_table(t0, ab, z, a_eq, b_eq, a_ub, b_ub):
         for j in range(len(a_eq[0])):
             x[j][len(b_eq)+i]=a_ub[i][j]
     for i in range(len(a_eq[0]), len(x)):
-        x[i][i-len(a_eq[0])+len(b_eq)]=1
+        x[i][i-len(a_eq[0])+len(b_eq)]=1+0*t
     for i in range(n):
         if x[i].count(1)==1 and x[i].count(0)==len(b)-1:
             bazis[x[i].index(1)]=i
-    #коец построения симплекс таблицы   
-    print(b)
-    print(x)
-    print(z)
-    print(bazis)
+    #коец построения симплекс таблицы  
+    
+    simplex_table=Table()
+    simplex_table.b=b
+    simplex_table.x=x
+    simplex_table.z=z
+    simplex_table.bazis=bazis
+    simplex_table.min=[0]*len(b)
+    return simplex_table
 
-
-   
-    return
 
 def simplex():
     return
 
 def ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub):
     z, a_eq, b_eq, a_ub, b_ub=init(z, a_eq, b_eq, a_ub, b_ub)
-    t0=0
-    build_simplex_table(t0, ab, z, a_eq, b_eq, a_ub, b_ub)
+    simplex_table=build_simplex_table( ab, z, a_eq, b_eq, a_ub, b_ub)
+    ti=find_ti(ab)
+    print(ti)
     return
 
 def print_table():
