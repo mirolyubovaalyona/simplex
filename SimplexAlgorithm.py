@@ -6,12 +6,12 @@ from sympy import *
 from sympy.solvers import solve
 
 t = Symbol('t')
-
+e=10**(-10)
 #класс для хранения результатов вычислений
 class Result():
     F= []  #целевая функция на промежутках
     X = [] #вектора иксов X = (x_1, ... , x_n)
-    T = [] # ...
+    T = [] # ...T_Res
 
 
 class T_Res():
@@ -26,6 +26,7 @@ class Table():
     z=[]
     bazis=[]
     min=[]
+    F
 
 def find_ti(ab):
     if ab==[-float("inf"),  float("inf")]:
@@ -42,7 +43,7 @@ def build_simplex_table(ab, z, a_eq, b_eq, a_ub, b_ub):
     bazis=[0]*len(b)
     n=len(b_ub)+len(a_eq[0])
     x=[ [0 for j in range(len(b))] for i in range(n)]
-    z_str=[0]*(len(z)+1)
+    z_str=[0]*(len(z))
     for i in range(len(z)):
         z_str[i]=-z[i]
     for i in range(len(b_eq)):
@@ -61,21 +62,28 @@ def build_simplex_table(ab, z, a_eq, b_eq, a_ub, b_ub):
     simplex_table=Table()
     simplex_table.b=b
     simplex_table.x=x
-    simplex_table.z=z
+    simplex_table.z=z_str
     simplex_table.bazis=bazis
     simplex_table.min=[0]*len(b)
+    simplex_table.F=0
     return simplex_table
 
 
-def simplex():
-    return
+def simplex(simplex_table,ti, ab):
+
+    for i in range(len(simplex_table.z)):
+        if simplex_table.z[i]>0:
+            return Res
+    return Res
 
 def ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub):
     z, a_eq, b_eq, a_ub, b_ub=init(z, a_eq, b_eq, a_ub, b_ub)
-    simplex_table=build_simplex_table( ab, z, a_eq, b_eq, a_ub, b_ub)
+    simplex_table=[]
+    simplex_table.append(build_simplex_table( ab, z, a_eq, b_eq, a_ub, b_ub))
     ti=find_ti(ab)
     print(ti)
-    return
+    Res=simplex(simplex_table,ti, ab )
+    return Res
 
 def print_table():
     return
