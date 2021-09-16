@@ -1,6 +1,7 @@
 import scipy
 from scipy.optimize import linprog
 import numpy as np
+import copy
 import sympy
 from sympy import *
 from sympy.solvers import solve
@@ -26,7 +27,7 @@ class Table():
     z=[]
     bazis=[]
     min=[]
-    F
+    F=0
 
 def find_ti(ab):
     if ab==[-float("inf"),  float("inf")]:
@@ -43,7 +44,7 @@ def build_simplex_table(ab, z, a_eq, b_eq, a_ub, b_ub):
     bazis=[0]*len(b)
     n=len(b_ub)+len(a_eq[0])
     x=[ [0 for j in range(len(b))] for i in range(n)]
-    z_str=[0]*(len(z))
+    z_str=[0*t]*(n)
     for i in range(len(z)):
         z_str[i]=-z[i]
     for i in range(len(b_eq)):
@@ -64,22 +65,51 @@ def build_simplex_table(ab, z, a_eq, b_eq, a_ub, b_ub):
     simplex_table.x=x
     simplex_table.z=z_str
     simplex_table.bazis=bazis
-    simplex_table.min=[0]*len(b)
+    simplex_table.min=[0*t]*len(b)
     simplex_table.F=0
     return simplex_table
 
 
-def simplex(simplex_table,ti, ab):
-
+def simplex(simplex_t,ti, ab):
+    simplex_table=simplex_t[len(simplex_t)-1]
+    table=copy.deepcopy(simplex_table)
+    table.z[0]=simplex_table.z[0].subs(t, ti)
+    min=table.z[0]
+    i_min=0
+    for i in range(1, len(simplex_table.z)):
+        table.z[i]=simplex_table.z[i].subs(t, ti)
+        if min>table.z[i]:
+            min=table.z[i]
+            i_min=i
     for i in range(len(simplex_table.z)):
-        if simplex_table.z[i]>0:
-            return Res
-    return Res
+        if table.z[i]>0:
+            return #Res$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    for i in range(len(simplex_table.b)):
+        if simplex_table.b[i]==0 or simplex_table.x[i_min][i]==0:
+            simplex_table.min[i]=float("inf")
+        else:
+            simplex_table.min[i]=simplex_table.b[i]/simplex_table.x[i_min][i]
+    minmin=simplex_table.min[0]
+    i_minmin=0
+    for i in range(1, len(simplex_table.min)):
+        if minmin>simplex_table.min[i]:
+            minmin=simplex_table.min[i]
+            i_minmin=i
+    print('hhhhhhhhhhhhhh')
+    #постоегие новой таблицы
+    new_table=copy.deepcopy(simplex_table)
+    new_table.bazis[i_minmin]=i_min
+    print(new_table.bazis)
+
+
+
+    return 
 
 def ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub):
     z, a_eq, b_eq, a_ub, b_ub=init(z, a_eq, b_eq, a_ub, b_ub)
     simplex_table=[]
-    simplex_table.append(build_simplex_table( ab, z, a_eq, b_eq, a_ub, b_ub))
+    table=build_simplex_table( ab, z, a_eq, b_eq, a_ub, b_ub)
+    simplex_table.append(table)
     ti=find_ti(ab)
     print(ti)
     Res=simplex(simplex_table,ti, ab )
