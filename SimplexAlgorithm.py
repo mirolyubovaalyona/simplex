@@ -81,12 +81,11 @@ def simplex(simplex_t,ti, ab):
         if min>table.z[i]:
             min=table.z[i]
             i_min=i
-    for i in range(len(simplex_table.z)):
-        if table.z[i]>0:
-            return #Res$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    if min>=0:
+        return simplex_t
     for i in range(len(simplex_table.b)):
         if simplex_table.b[i]==0 or simplex_table.x[i_min][i]==0:
-            simplex_table.min[i]=float("inf")
+            simplex_table.min[i]=float("inf")+0*t
         else:
             simplex_table.min[i]=simplex_table.b[i]/simplex_table.x[i_min][i]
     minmin=simplex_table.min[0]
@@ -100,10 +99,37 @@ def simplex(simplex_t,ti, ab):
     new_table=copy.deepcopy(simplex_table)
     new_table.bazis[i_minmin]=i_min
     print(new_table.bazis)
+    for i in range(len(simplex_table.z)):
+        new_table.x[i][i_minmin]=simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]
+        print(new_table.x[i][i_minmin])
+    #new b
+    new_table.b[i_minmin]=simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]
+    for i in range(i_minmin):
+        new_table.b[i]=simplex_table.b[i]-simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][i]
+    for i in range(i_minmin+1, len(new_table.b)):
+        new_table.b[i]=simplex_table.b[i]-simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][i]
+    #new x
+    for i in range(len(simplex_table.z)):
+        new_table.x[i][i_minmin]=simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]
+    for j in range(i_minmin):
+        for i in range(len(simplex_table.z)):
+            new_table.x[i][j]=simplex_table.x[i][j]-simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][j]
+    for j in range(i_minmin+1, len(simplex_table.b)):
+        for i in range(len(simplex_table.z)):
+            new_table.x[i][j]=simplex_table.x[i][j]-simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][j]
+    print(new_table.x)
+    #new z
+    for i in range(len(simplex_table.z)):
+        new_table.z[i]=simplex_table.z[i]-simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.z[i_min]
+    print(new_table.z)
+    #new F
+    new_table.F=simplex_table.F-simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.z[i_min]
+    print(new_table.F)
 
+    simplex_t[len(simplex_t)-1]=simplex_table
+    simplex_t.append(new_table)
 
-
-    return 
+    return  simplex(simplex_t,ti, ab)
 
 def ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub):
     z, a_eq, b_eq, a_ub, b_ub=init(z, a_eq, b_eq, a_ub, b_ub)
