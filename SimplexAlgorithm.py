@@ -8,6 +8,7 @@ from sympy.solvers import solve
 
 t = Symbol('t')
 e=10**(-10)
+
 #класс для хранения результатов вычислений
 class Result():
     F= []  #целевая функция на промежутках
@@ -39,7 +40,7 @@ def find_ti(ab):
     return ti
 
 def build_simplex_table(ab, z, a_eq, b_eq, a_ub, b_ub):
-        #построение симплекс таблицы
+    #построение симплекс таблицы
     b=b_eq+b_ub
     bazis=[0]*len(b)
     n=len(b_ub)+len(a_eq[0])
@@ -83,6 +84,8 @@ def simplex(simplex_t,ti, ab):
             i_min=i
     if min>=0:
         return simplex_t
+
+    # нахождение элементов
     for i in range(len(simplex_table.b)):
         if simplex_table.b[i]==0 or simplex_table.x[i_min][i]==0:
             simplex_table.min[i]=float("inf")+0*t
@@ -94,7 +97,7 @@ def simplex(simplex_t,ti, ab):
         if minmin>simplex_table.min[i]:
             minmin=simplex_table.min[i]
             i_minmin=i
-    print('hhhhhhhhhhhhhh')
+
     #постоегие новой таблицы
     new_table=copy.deepcopy(simplex_table)
     new_table.bazis[i_minmin]=i_min
