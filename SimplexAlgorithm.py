@@ -140,9 +140,8 @@ def ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub):
     table=build_simplex_table( ab, z, a_eq, b_eq, a_ub, b_ub)
     simplex_table.append(table)
     ti=find_ti(ab)
-    print(ti)
-    Res=simplex(simplex_table,ti, ab )
-    return Res
+    simplex(simplex_table,ti, ab)
+    return 
 
 def print_table():
     return
@@ -161,3 +160,17 @@ def init(z, a_eq, b_eq, a_ub, b_ub):
         for j in range(len(a_ub[0])):
             a_ub[i][j]+=0*t
     return z, a_eq, b_eq, a_ub, b_ub
+
+def interval_t(simplex_table):
+    z=simplex_table[len(simplex_t)-1].z
+    t_result=T_Res()
+    for i in range(len(z)):
+        z[i]=z[i]+t>=0
+    print(z)
+    r=solve(z, t)
+    print(str(r), str(r)[1])
+    return t_result
+
+
+def loop(ab, res):
+    return

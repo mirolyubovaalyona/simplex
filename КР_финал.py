@@ -24,7 +24,11 @@ SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
 #print(Res)
 
 #var('t')
-r=solve([  t>=0], t)
+z=[7*t+10, 2*t-9]
+for i in range(len(z)):
+    z[i]=z[i]+t>=0
+print(z)
+r=solve(z, t)
 print(str(r), str(r)[1])
 
 import random
