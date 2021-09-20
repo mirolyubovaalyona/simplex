@@ -9,7 +9,7 @@ from fractions import Fraction
 from prettytable import PrettyTable
 
 t = Symbol('t')
-e=10**(-10)
+e=1
 
 #класс для хранения результатов вычислений
 class Result():
@@ -44,7 +44,7 @@ def build_simplex_table(z, a_eq, b_eq, a_ub, b_ub):
     #построение симплекс таблицы
     b=b_eq+b_ub
     bazis=[0]*len(b)
-    n=len(b_ub)+len(a_eq[0])
+    n=len(b_ub)+len(z)
     x=[ [0 for j in range(len(b))] for i in range(n)]
     z_str=[0*t]*(n)
     for i in range(len(z)):
@@ -53,10 +53,10 @@ def build_simplex_table(z, a_eq, b_eq, a_ub, b_ub):
         for j in range(len(a_eq[i])):
             x[j][i]=a_eq[i][j]
     for i in range(len(b_ub)):
-        for j in range(len(a_eq[0])):
+        for j in range(len(z)):
             x[j][len(b_eq)+i]=a_ub[i][j]
-    for i in range(len(a_eq[0]), len(x)):
-        x[i][i-len(a_eq[0])+len(b_eq)]=1+0*t
+    for i in range(len(z), len(x)):
+        x[i][i-len(z)+len(b_eq)]=1+0*t
     for i in range(n):
         if x[i].count(1)==1 and x[i].count(0)==len(b)-1:
             bazis[x[i].index(1)]=i
@@ -92,10 +92,10 @@ def simplex(simplex_t,ti):
             simplex_table.min[i]=float("inf")+0*t
         else:
             simplex_table.min[i]=simplex_table.b[i]/simplex_table.x[i_min][i]
-    minmin=simplex_table.min[0]
+    minmin=simplex_table.min[0].subs(t, ti)
     i_minmin=0
     for i in range(1, len(simplex_table.min)):
-        if minmin>simplex_table.min[i]:
+        if minmin.subs(t, ti)>simplex_table.min[i].subs(t, ti):
             minmin=simplex_table.min[i]
             i_minmin=i
 
@@ -178,7 +178,10 @@ def print_table(simplex_table):
 def print_Res(Res):
     for i in range(len(Res)):
         print_table(Res[i].simplex_table)
-        print(Res[i].T.a, Res[i].T.z1, 't',  Res[i].T.z2, Res[i].T.b)
+        if Res[i].T.z1=='False':
+            print('Допустимых решений нет')
+        else:
+            print(Res[i].T.a, Res[i].T.z1, 't',  Res[i].T.z2, Res[i].T.b)
     return
 
 def init(z, a_eq, b_eq, a_ub, b_ub):
@@ -202,7 +205,17 @@ def interval_t(simplex_table):
     for i in range(len(z)):
         z[i]=z[i]+0*t>=0
     r=str(solve(z, t))
-    print(r)
+    if r=='[]':
+        b=copy.deepcopy(simplex_table[len(simplex_table)-1].b)
+        for i in range(len(b)):
+            b[i]=b[i]+0*t>=0
+        r=str(solve(b, t))
+    if r=='False':
+        t_result.z1='False'
+        t_result.z2='False'
+        t_result.a=-float("inf")
+        t_result.b=float("inf")
+        return t_result
     r=r.replace('&', '')
     if r.find('(t < oo)')!=-1:
         r=r.replace('(t < oo)', '')
@@ -245,7 +258,7 @@ def interval_t(simplex_table):
 
 
 def loop(ab, Res, table):
-    if (ab[0]==Res[0].T.a and Res[0].T.z1=='<=' and ab[1]==Res[len(Res)-1].T.b and Res[len(Res)-1].T.z2=='<=') or (Res[0].T.a==-float("inf") and Res[len(Res)-1].T.b==float("inf")) or (ab[0]>Res[0].T.a and ab[1]<Res[len(Res)-1].T.b) or (ab[0]>Res[0].T.a  and Res[len(Res)-1].T.b==float("inf")) or (Res[0].T.a==-float("inf") and ab[1]<Res[len(Res)-1].T.b):
+    if (ab[0]==Res[0].T.a and Res[0].T.z1=='<=' and ab[1]==Res[len(Res)-1].T.b and Res[len(Res)-1].T.z2=='<=') or (Res[0].T.a==-float("inf") and Res[len(Res)-1].T.b==float("inf")) or (ab[0]>Res[0].T.a and ab[1]<Res[len(Res)-1].T.b) or (ab[0]>Res[0].T.a  and (Res[len(Res)-1].T.b==float("inf") or Res[len(Res)-1].T.z1=='False')) or ((Res[0].T.a==-float("inf") or Res[0].T.z1=='False') and ab[1]<Res[len(Res)-1].T.b):
         return Res
     simplex_table=[]
     simplex_table.append(table)
