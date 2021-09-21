@@ -76,7 +76,7 @@ b_ub=[60, 30]
 #Работает
 #SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
  
-print("пример 2")
+print("пример 7.2.6")
 ab=[0,  float("inf")]
 z=[3, 2, 5] #тут хрвняться выражения перед иксами в функции
 a_eq=[] #коэффициенты из ограничений-равенств 
@@ -84,8 +84,33 @@ b_eq=[]
 a_ub=[[1, 2, 1], [3, 0, 2], [1, 4, 0]] #коэффициенты из ограничений-неравенств
 b_ub=[40-t, 60+2*t, 30-7*t]
 
-#Не работает
-SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
+#работает
+#SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
 
 
+###############################################################################3
+class Table():
+    b=[]
+    x=[]
+    z=[]
+    bazis=[]
+    min=[]
+    F=0
 
+s=Table()
+s.bazis=[3, 4, 5]
+s.b=[-33, -23, -12]
+s.x=[[-4, -3, -1],
+     [-3, -2, -1],
+     [-2, -1, -2],
+     [1, 0, 0],
+     [0, 1,0],
+     [0, 0, 1]]
+s.z=[-20, -20, -10, 0, 0, 0]
+s.min=[-0, -0, -0]
+
+#table, y=SimplexAlgorithm.minus_b(s, 0)
+
+ss=[]
+#ss.append(table)
+#SimplexAlgorithm.print_table(ss)
