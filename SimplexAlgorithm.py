@@ -38,7 +38,7 @@ def find_ti(ab):
         ti=ab[1]
     if ab[1]==float("inf"):
         ti=ab[0]
-    return ti
+    return ab[0]
 
 def build_simplex_table(z, a_eq, b_eq, a_ub, b_ub):
     #построение симплекс таблицы
@@ -92,6 +92,8 @@ def simplex(simplex_t,ti):
             simplex_table.min[i]=float("inf")+0*t
         else:
             simplex_table.min[i]=simplex_table.b[i]/simplex_table.x[i_min][i]
+            if simplex_table.min[i].subs(t, ti)<0:
+                simplex_table.min[i]=float("inf")+0*t
     minmin=simplex_table.min[0].subs(t, ti)
     i_minmin=0
     for i in range(1, len(simplex_table.min)):
@@ -137,7 +139,7 @@ def ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub):
     simplex_table.append(table)
     ti=find_ti(ab)
     s=simplex(simplex_table,ti)
-    t1=interval_t(s)
+    t1=interval_t(s, ab)
     r1=Result()
     r1.simplex_table=s
     r1.T=t1
@@ -199,11 +201,11 @@ def init(z, a_eq, b_eq, a_ub, b_ub):
             a_ub[i][j]+=0*t
     return z, a_eq, b_eq, a_ub, b_ub
 
-def interval_t(simplex_table):
+def interval_t(simplex_table, ab):
     z=copy.deepcopy(simplex_table[len(simplex_table)-1].z)
     t_result=T_Res()
     for i in range(len(z)):
-        z[i]=z[i]+0*t>=0
+        z[i]=str(z[i])+'+0*t>=0'
     r=str(solve(z, t))
     if r=='[]':
         b=copy.deepcopy(simplex_table[len(simplex_table)-1].b)
@@ -268,7 +270,7 @@ def loop(ab, Res, table):
         else:
             t1=Res[len(Res)-1].T.b
         simplex2=simplex(simplex_table,t1)
-        t2=interval_t(simplex2)
+        t2=interval_t(simplex2, ab)
         r2=Result()
         r2.simplex_table=simplex2
         r2.T=t2
@@ -280,7 +282,7 @@ def loop(ab, Res, table):
         else:
             t0=Res[0].T.a
         simplex1=simplex(simplex_table,t0)
-        t1=interval_t(simplex1)
+        t1=interval_t(simplex1, ab)
         r1=Result()
         r1.simplex_table=simplex1
         r1.T=t1
@@ -298,8 +300,8 @@ def loop(ab, Res, table):
         t1=Res[len(Res)-1].T.b
     simplex2=simplex(simplex_table,t1)
 
-    t1=interval_t(simplex1)
-    t2=interval_t(simplex2)
+    t1=interval_t(simplex1, ab)
+    t2=interval_t(simplex2, ab)
     r1=Result()
     r1.simplex_table=simplex1
     r1.T=t1
