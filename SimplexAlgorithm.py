@@ -122,6 +122,7 @@ def minus_b(simplex_table, ti):
 
 
 def simplex(simplex_t,ti):
+    print_table(simplex_t)
     simplex_table=simplex_t[len(simplex_t)-1]
     table=copy.deepcopy(simplex_table)
     table.z[0]=simplex_table.z[0].subs(t, ti)
@@ -321,6 +322,7 @@ def interval_t(simplex_table, ab):
 
 
 def loop(ab, Res, table):
+    print_Res(Res)
     if (((ab[0]==Res[0].T.a and Res[0].T.z1=='<=') or ab[0]>Res[0].T.a) and ((ab[1]==Res[len(Res)-1].T.b and Res[len(Res)-1].T.z2=='<=') or ab[1]<Res[len(Res)-1].T.b)) or (Res[0].T.a==-float("inf") and Res[len(Res)-1].T.b==float("inf")) or (ab[0]>Res[0].T.a and ab[1]<Res[len(Res)-1].T.b) or (ab[0]>Res[0].T.a  and (Res[len(Res)-1].T.b==float("inf") or Res[len(Res)-1].T.z1=='False')) or ((Res[0].T.a==-float("inf") or Res[0].T.z1=='False') and ab[1]<Res[len(Res)-1].T.b):
         return Res
     simplex_table=[]

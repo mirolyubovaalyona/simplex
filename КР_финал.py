@@ -54,13 +54,13 @@ print("пример 2.68")
 ab=[-float("inf"),  float("inf")] #промежуток t
 z=[8-5*t, 0-3*t, -3+5*t, -2-4*t] #тут хрвняться выражения перед иксами в функции
 a_eq=[[1, -1, 1, 0], 
-      [-1, 0, 2, 1]] #коэффициенты из ограничений-равенств 
+      [-1, 2, 0, 1]] #коэффициенты из ограничений-равенств 
 b_eq=[24-12*t, -18+10*t] 
 a_ub=[] #коэффициенты из ограничений-неравенств
 b_ub=[]
 
 # не ротаеьт
-#SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
+SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
 
 print('таха')
 print("пример 1")
