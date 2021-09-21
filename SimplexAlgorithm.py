@@ -9,7 +9,7 @@ from fractions import Fraction
 from prettytable import PrettyTable
 
 t = Symbol('t')
-e=1
+e=10**(-8)
 
 #класс для хранения результатов вычислений
 class Result():
@@ -58,10 +58,8 @@ def build_simplex_table(z, a_eq, b_eq, a_ub, b_ub):
     for i in range(n):
         if x[i].count(1)==1 and x[i].count(0)==len(b)-1:
             bazis[x[i].index(1)]=i
-
     for i in range(len(z)):
         z_str[i]=-z[i]
-    print(z_str)
     for i in range(len(z_str)):
         for j in range(len(bazis)):
             z_str[i]+=z_str[bazis[j]]*x[i][j]
@@ -77,17 +75,19 @@ def build_simplex_table(z, a_eq, b_eq, a_ub, b_ub):
     return simplex_table
 
 def minus_b(simplex_table, ti):
+    print('lolll')
     i_max=0
     table=copy.deepcopy(simplex_table)
-    print(simplex_table.b, ti)
     for i in range(len(simplex_table.b)):
         if abs(simplex_table.b[i_max].subs(t, ti))<abs(simplex_table.b[i].subs(t, ti)):
             i_max=i
     j_max=0
     for i in range(len(simplex_table.z)):
+        for j in range(len(simplex_table.b)):
+            simplex_table.x[i][j]+=0*t
+    for i in range(len(simplex_table.z)):
         if abs(simplex_table.x[j_max][i_max].subs(t, ti))<abs(simplex_table.x[i][i_max].subs(t, ti)):
             j_max=i
-    print(i_max, j_max)
     for i in range(len(simplex_table.z)):
         table.x[i][i_max]=simplex_table.x[i][i_max]/simplex_table.x[j_max][i_max]
     for i in range(0, i_max):
@@ -150,25 +150,25 @@ def simplex(simplex_t,ti):
     for i in range(len(simplex_table.z)):
         new_table.x[i][i_minmin]=simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]
     #new b
-    new_table.b[i_minmin]=simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]
+    new_table.b[i_minmin]=simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]+0*t
     for i in range(i_minmin):
-        new_table.b[i]=simplex_table.b[i]-simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][i]
+        new_table.b[i]=simplex_table.b[i]-simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][i]+0*t
     for i in range(i_minmin+1, len(new_table.b)):
-        new_table.b[i]=simplex_table.b[i]-simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][i]
+        new_table.b[i]=simplex_table.b[i]-simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][i]+0*t
     #new x
     for i in range(len(simplex_table.z)):
-        new_table.x[i][i_minmin]=simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]
+        new_table.x[i][i_minmin]=simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]+0*t
     for j in range(i_minmin):
         for i in range(len(simplex_table.z)):
-            new_table.x[i][j]=simplex_table.x[i][j]-simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][j]
+            new_table.x[i][j]=simplex_table.x[i][j]-simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][j]+0*t
     for j in range(i_minmin+1, len(simplex_table.b)):
         for i in range(len(simplex_table.z)):
-            new_table.x[i][j]=simplex_table.x[i][j]-simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][j]
+            new_table.x[i][j]=simplex_table.x[i][j]-simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.x[i_min][j]+0*t
     #new z
     for i in range(len(simplex_table.z)):
-        new_table.z[i]=simplex_table.z[i]-simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.z[i_min]
+        new_table.z[i]=simplex_table.z[i]-simplex_table.x[i][i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.z[i_min]+0*t
     #new F
-    new_table.F=simplex_table.F-simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.z[i_min]
+    new_table.F=simplex_table.F-simplex_table.b[i_minmin]/simplex_table.x[i_min][i_minmin]*simplex_table.z[i_min]+0*t
 
     simplex_t[len(simplex_t)-1]=simplex_table
     simplex_t.append(new_table)
@@ -303,7 +303,8 @@ def interval_t(simplex_table, ab):
 
 
 def loop(ab, Res, table):
-    if (ab[0]==Res[0].T.a and Res[0].T.z1=='<=' and ab[1]==Res[len(Res)-1].T.b and Res[len(Res)-1].T.z2=='<=') or (Res[0].T.a==-float("inf") and Res[len(Res)-1].T.b==float("inf")) or (ab[0]>Res[0].T.a and ab[1]<Res[len(Res)-1].T.b) or (ab[0]>Res[0].T.a  and (Res[len(Res)-1].T.b==float("inf") or Res[len(Res)-1].T.z1=='False')) or ((Res[0].T.a==-float("inf") or Res[0].T.z1=='False') and ab[1]<Res[len(Res)-1].T.b):
+    print_Res(Res)
+    if (((ab[0]==Res[0].T.a and Res[0].T.z1=='<=') or ab[0]>Res[0].T.a) and ((ab[1]==Res[len(Res)-1].T.b and Res[len(Res)-1].T.z2=='<=') or ab[1]<Res[len(Res)-1].T.b)) or (Res[0].T.a==-float("inf") and Res[len(Res)-1].T.b==float("inf")) or (ab[0]>Res[0].T.a and ab[1]<Res[len(Res)-1].T.b) or (ab[0]>Res[0].T.a  and (Res[len(Res)-1].T.b==float("inf") or Res[len(Res)-1].T.z1=='False')) or ((Res[0].T.a==-float("inf") or Res[0].T.z1=='False') and ab[1]<Res[len(Res)-1].T.b):
         return Res
     simplex_table=[]
     simplex_table.append(table)
