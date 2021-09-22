@@ -69,7 +69,7 @@ def build_simplex_table(z, a_eq, b_eq, a_ub, b_ub):
         y=0
         for j in range(len(bazis)):
             y+=c[bazis[j]]*x[i][j]
-        z_str[i]=y-z[i]
+        z_str[i]=y-c[i]
     #коец построения симплекс таблицы  
     
     simplex_table=Table()
@@ -83,15 +83,14 @@ def build_simplex_table(z, a_eq, b_eq, a_ub, b_ub):
     return simplex_table
 
 def minus_b(simplex_table, ti):
-    s=[]
-    s.append(simplex_table)
-    print('b')
-    print_table(s)
     i_max=0
     table=copy.deepcopy(simplex_table)
     for i in range(len(simplex_table.b)):
         simplex_table.b[i]+=t*0
         if (simplex_table.b[i].subs(t, ti))<0:
+            i_max=i
+    for i in range(len(simplex_table.b)):
+        if abs(simplex_table.b[i_max].subs(t, ti))<abs(simplex_table.b[i].subs(t, ti)) and (simplex_table.b[i].subs(t, ti))<0:
             i_max=i
     minus=0
     for i in range(len(simplex_table.z)):
@@ -99,20 +98,16 @@ def minus_b(simplex_table, ti):
             minus=1
     if minus == 0:
         return simplex_table, 0
-    for i in range(len(simplex_table.b)):
-        if abs(simplex_table.b[i_max].subs(t, ti))<abs(simplex_table.b[i].subs(t, ti)) and (simplex_table.b[i].subs(t, ti))<0:
-            i_max=i
     j_max=0
-    yes=0
     for i in range(len(simplex_table.z)):
         for j in range(len(simplex_table.b)):
             simplex_table.x[i][j]+=0*t
     for i in range(len(simplex_table.z)):
-        if abs(simplex_table.x[j_max][i_max].subs(t, ti))<abs(simplex_table.x[i][i_max].subs(t, ti))  and simplex_table.x[i][i_max].subs(t, ti)<0:
+        if simplex_table.x[i][i_max].subs(t, ti)<0:
             j_max=i
-            yes=1
-    if yes==0:
-        print('yeeeeeeeeeeeeeeeeees')
+    for i in range(len(simplex_table.z)):
+        if abs(simplex_table.x[j_max][i_max].subs(t, ti))<=abs(simplex_table.x[i][i_max].subs(t, ti))  and simplex_table.x[i][i_max].subs(t, ti)<0:
+            j_max=i
     table.b[i_max]=table.b[i_max]/simplex_table.x[j_max][i_max]
     for i in range(len(simplex_table.z)):
         table.x[i][i_max]=simplex_table.x[i][i_max]/simplex_table.x[j_max][i_max]
@@ -136,7 +131,6 @@ def minus_b(simplex_table, ti):
 
 
 def simplex(simplex_t,ti):
-    print_table(simplex_t)
     simplex_table=simplex_t[len(simplex_t)-1]
     table=copy.deepcopy(simplex_table)
     table.z[0]=simplex_table.z[0].subs(t, ti)
@@ -148,7 +142,7 @@ def simplex(simplex_t,ti):
             min=table.z[i]
             i_min=i
     if min>=0:
-        return simplex_t
+        return simplex_t, 0
 
     minus=0
     for i in range(len(simplex_table.b)):
@@ -156,16 +150,9 @@ def simplex(simplex_t,ti):
         if table.b[i]<0:
             minus=1
     if minus==1:
-        s=[]
-        s.append(simplex_table)
-        print(ti, '------------------')
-        print_table(simplex_t)
-        print_table(s)
         simplex_table, y=minus_b(simplex_table, ti)
         if y==0:
-            simplex_t[len(simplex_t)-1].z[0]=-1*t
-            simplex_t[len(simplex_t)-1].z[len(simplex_t[len(simplex_t)-1].z)-1]=1*t
-            return simplex_t
+            return simplex_t, 1
 
     # нахождение элементов
     for i in range(len(simplex_table.b)):
@@ -229,15 +216,22 @@ def ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub):
     table=build_simplex_table(z, a_eq, b_eq, a_ub, b_ub)
     simplex_table.append(table)
     ti=find_ti(ab)
-    s=simplex(simplex_table,ti)
-    t1=interval_t(s, ab)
+    s, y=simplex(simplex_table,ti)
+    if y==1:
+        t1=T_Res()
+        t1.a=-float("inf")
+        t1.b=float("inf")
+        t1.z1='False'
+        t1.z2='False'
+    else:
+        t1=interval_t(s, ab)
     r1=Result()
     r1.simplex_table=s
     r1.T=t1
     Res=[]
     Res.append(r1)
     Simplex_Res=loop(ab, Res, table)
-    print_Res(Res)
+    print_Res(Simplex_Res)
     return 
 
 def print_table(simplex_table): 
@@ -360,8 +354,15 @@ def loop(ab, Res, table):
             t1=Res[len(Res)-1].T.b+e
         else:
             t1=Res[len(Res)-1].T.b
-        simplex2=simplex(simplex_table,t1)
-        t2=interval_t(simplex2, ab)
+        simplex2, y=simplex(simplex_table,t1)
+        if y==1:
+            t2=T_Res()
+            t2.a=-float("inf")
+            t2.b=float("inf")
+            t2.z1='False'
+            t2.z2='False'
+        else:
+            t2=interval_t(simplex2, ab)
         r2=Result()
         r2.simplex_table=simplex2
         r2.T=t2
@@ -372,30 +373,48 @@ def loop(ab, Res, table):
              t0=Res[0].T.a-e
         else:
             t0=Res[0].T.a
-        simplex1=simplex(simplex_table,t0)
-        t1=interval_t(simplex1, ab)
+        simplex1, y=simplex(simplex_table,t0)
+        if y==1:
+            t1=T_Res()
+            t1.a=-float("inf")
+            t1.b=float("inf")
+            t1.z1='False'
+            t1.z2='False'
+        else:
+            t1=interval_t(simplex1, ab)
         r1=Result()
         r1.simplex_table=simplex1
         r1.T=t1
         Res.insert(0, r1)
         return loop(ab, Res, table)
 
-    print('lool')
+
     if Res[0].T.z1=='<=':
         t0=Res[0].T.a-e
     else:
         t0=Res[0].T.a
-    print(t0)
-    simplex1=simplex(simplex_table,t0)
     if Res[len(Res)-1].T.z2=='<=':
         t1=Res[len(Res)-1].T.b+e
     else:
         t1=Res[len(Res)-1].T.b
-    print(t1)
-    simplex2=simplex(simplex_table,t1)
-
-    t1=interval_t(simplex1, ab)
-    t2=interval_t(simplex2, ab)
+    simplex2, u=simplex(copy.deepcopy(simplex_table),t1)
+    simplex1, y=simplex(copy.deepcopy(simplex_table),t0)
+    if y==1:
+        t1=T_Res()
+        t1.a=-float("inf")
+        t1.b=float("inf")
+        t1.z1='False'
+        t1.z2='False'
+    else:
+        t1=interval_t(simplex1, ab)
+    if u==1:
+        t2=T_Res()
+        t2.a=-float("inf")
+        t2.b=float("inf")
+        t2.z1='False'
+        t2.z2='False'
+    else:
+        t2=interval_t(simplex2, ab)
     r1=Result()
     r1.simplex_table=simplex1
     r1.T=t1
