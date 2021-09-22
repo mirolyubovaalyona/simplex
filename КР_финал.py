@@ -22,7 +22,7 @@ a_ub=[[4, 1, 0], [2, 2, 0], [6, 0, 3]] #коэффициенты из огран
 b_ub=[16, 22, 36]
 
 #работает
-#SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub) 
+SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub) 
  
 print("пример 2.64")
 ab=[-float("inf"),  float("inf")] #промежуток t
@@ -35,7 +35,7 @@ a_ub=[] #коэффициенты из ограничений-неравенст
 b_ub=[]
 
 # Работвет
-#SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
+SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
 
 print("пример 2.66")
 ab=[-float("inf"),  float("inf")] #промежуток t

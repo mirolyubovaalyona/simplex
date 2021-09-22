@@ -150,7 +150,7 @@ def simplex(simplex_t,ti):
         if table.b[i]<0:
             minus=1
     if minus==1:
-        q, y=minus_b(simplex_table, ti)
+        q, u=minus_b(simplex_table, ti)
         simplex_t.append(q)
         simplex_table=copy.deepcopy(simplex_t[len(simplex_t)-1])
         #new z
@@ -166,7 +166,7 @@ def simplex(simplex_t,ti):
         for j in range(len(simplex_table.bazis)):
             F+=simplex_table.c[simplex_table.bazis[j]]*simplex_table.b[j]
         simplex_table.F=F
-        if y==0:
+        if u==0:
             return simplex_t, 1
 
     # нахождение элементов
