@@ -48,7 +48,7 @@ a_ub=[] #коэффициенты из ограничений-неравенст
 b_ub=[]
 
 # не ротаеьт
-#SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
+SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
  
 print("пример 2.68")
 ab=[-float("inf"),  float("inf")] #промежуток t
@@ -60,7 +60,7 @@ a_ub=[] #коэффициенты из ограничений-неравенст
 b_ub=[]
 
 # не ротаеьт
-SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
+#SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
 
 print('таха')
 print("пример 1")
