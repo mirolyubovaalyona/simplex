@@ -103,12 +103,16 @@ def minus_b(simplex_table, ti):
         if abs(simplex_table.b[i_max].subs(t, ti))<abs(simplex_table.b[i].subs(t, ti)) and (simplex_table.b[i].subs(t, ti))<0:
             i_max=i
     j_max=0
+    yes=0
     for i in range(len(simplex_table.z)):
         for j in range(len(simplex_table.b)):
             simplex_table.x[i][j]+=0*t
     for i in range(len(simplex_table.z)):
-        if abs(simplex_table.x[j_max][i_max].subs(t, ti))<abs(simplex_table.x[i][i_max].subs(t, ti)):
+        if abs(simplex_table.x[j_max][i_max].subs(t, ti))<abs(simplex_table.x[i][i_max].subs(t, ti))  and simplex_table.x[i][i_max].subs(t, ti)<0:
             j_max=i
+            yes=1
+    if yes==0:
+        print('yeeeeeeeeeeeeeeeeees')
     table.b[i_max]=table.b[i_max]/simplex_table.x[j_max][i_max]
     for i in range(len(simplex_table.z)):
         table.x[i][i_max]=simplex_table.x[i][i_max]/simplex_table.x[j_max][i_max]
@@ -152,6 +156,11 @@ def simplex(simplex_t,ti):
         if table.b[i]<0:
             minus=1
     if minus==1:
+        s=[]
+        s.append(simplex_table)
+        print(ti, '------------------')
+        print_table(simplex_t)
+        print_table(s)
         simplex_table, y=minus_b(simplex_table, ti)
         if y==0:
             simplex_t[len(simplex_t)-1].z[0]=-1*t
