@@ -93,6 +93,22 @@ SimplexAlgorithm.print_Res(Simplex_Res)
 print('Результат :')
 SimplexAlgorithm.print_short_Res(Simplex_Res, ab)
 
+print("пример 2.74")
+ab=[-float("inf"),  float("inf")] #промежуток t
+z=[2+t, -(3-t), 0, 0, 3*(2+4*t)] #тут хрвняться выражения перед иксами в функции
+a_eq=[[1, 2, 1, 0, 0],
+      [-1, 3, 0, 1, 0],
+      [1, -2, 0, 0, 1]] #коэффициенты из ограничений-равенств 
+b_eq=[4+6*t, 9-12*t, 8+9*t]
+a_ub=[] #коэффициенты из ограничений-неравенств
+b_ub=[]
+
+#работает
+Simplex_Res=SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
+SimplexAlgorithm.print_Res(Simplex_Res)
+print('Результат :')
+SimplexAlgorithm.print_short_Res(Simplex_Res, ab)
+
 print('таха')
 print("пример 7.6.1")
 #ab=[-float("inf"),  float("inf")]
