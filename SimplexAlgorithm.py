@@ -122,7 +122,7 @@ def minus_b(simplex_table, ti):
             table.x[j][i]=simplex_table.x[j][i]-table.x[j][i_max]*simplex_table.x[j_max][i]
     table.bazis[i_max]=j_max
     minus=0
-    for i in range(len(simplex_table.b)):
+    for i in range(len(table.b)):
         if (table.b[i]+t*0).subs(t, ti)<0:
             minus=1
     if minus==1:
@@ -135,14 +135,6 @@ def simplex(simplex_t,ti):
     table=copy.deepcopy(simplex_table)
     table.z[0]=simplex_table.z[0].subs(t, ti)
     min=table.z[0]
-    i_min=0
-    for i in range(1, len(simplex_table.z)):
-        table.z[i]=simplex_table.z[i].subs(t, ti)
-        if min>table.z[i]:
-            min=table.z[i]
-            i_min=i
-    if min>=0:
-        return simplex_t, 0
 
     minus=0
     for i in range(len(simplex_table.b)):
@@ -160,15 +152,24 @@ def simplex(simplex_t,ti):
             for j in range(len(simplex_table.bazis)):
                 y+=simplex_table.c[simplex_table.bazis[j]]*simplex_table.x[i][j]
             z_str[i]=y-simplex_table.c[i]
-        simplex_table.z=z_str
+            simplex_table.z[i]=z_str[i]
         #new F
         F=0
         for j in range(len(simplex_table.bazis)):
             F+=simplex_table.c[simplex_table.bazis[j]]*simplex_table.b[j]
         simplex_table.F=F
+        simplex_t[len(simplex_t)-1]=copy.deepcopy(simplex_table)
+        simplex_table=copy.deepcopy(simplex_t[len(simplex_t)-1])
         if u==0:
             return simplex_t, 1
-
+    i_min=0
+    for i in range(1, len(simplex_table.z)):
+        table.z[i]=simplex_table.z[i].subs(t, ti)
+        if min>table.z[i]:
+            min=table.z[i]
+            i_min=i
+    if min>=0:
+        return simplex_t, 0
     # нахождение элементов
     for i in range(len(simplex_table.b)):
         if simplex_table.b[i]==0 or simplex_table.x[i_min][i]==0:
@@ -229,7 +230,7 @@ def ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub):
     table=build_simplex_table(z, a_eq, b_eq, a_ub, b_ub)
     simplex_table.append(table)
     ti=find_ti(ab)
-    s, y=simplex(simplex_table,ti)
+    s, y=copy.deepcopy(simplex(simplex_table,ti))
     if y==1:
         t1=T_Res()
         t1.a=-float("inf")
@@ -244,10 +245,7 @@ def ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub):
     Res=[]
     Res.append(r1)
     Simplex_Res=loop(ab, Res, table)
-    print_Res(Simplex_Res)
-    print('Результат :')
-    print_short_Res(Simplex_Res, ab)
-    return 
+    return Simplex_Res
 
 def print_table(simplex_table): 
     table= PrettyTable()
@@ -258,16 +256,16 @@ def print_table(simplex_table):
     table.field_names=row
     for i in range(len(simplex_table)):
         row=[' ']
-        row.append('F='+str(simplex_table[i].F))
+        row.append('F='+str(simplify(simplex_table[i].F)))
         main_row=[]
         for j in range(len(simplex_table[0].x)):
-            row.append(str(simplex_table[i].z[j]))
+            row.append(str(simplify(simplex_table[i].z[j])))
         for j in range(len(simplex_table[0].b)):
             main_row.append('x'+str(simplex_table[i].bazis[j]))
-            main_row.append(simplex_table[i].b[j])
+            main_row.append(simplify(simplex_table[i].b[j]))
             for q in range(len(simplex_table[0].x)):
-                main_row.append(simplex_table[i].x[q][j])
-            main_row.append(simplex_table[i].min[j])
+                main_row.append(simplify(simplex_table[i].x[q][j]))
+            main_row.append(simplify(simplex_table[i].min[j]))
             table.add_row(main_row)
             main_row=[]
         row.append(' ')
@@ -287,7 +285,19 @@ def print_Res(Res):
     return
 def print_short_Res(Res, ab):
     print(ab[0], '<= t <= ', ab[1])
-    for i in range(len(Res)):
+    i=0
+    s=''
+    if Res[i].T.z1=='False':
+        s+='Допустимых решений нет'
+    else:
+        s+=str(ab[0])+' '+str(Res[i].T.z1)+' t '+str(Res[i].T.z2) +' '+str(Res[i].T.b)+'; '
+        s+='('
+        for j in range(len(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis)):
+            s+='x'+str(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis[j])+'='+str((Res[i].simplex_table[len(Res[i].simplex_table)-1].b[j]))+', '
+        s=s[:-2]
+        s+='); F='+str(simplify(Res[i].simplex_table[len(Res[i].simplex_table)-1].F))+';'
+    print(s)
+    for i in range(1, len(Res)-1):
         s=''
         if Res[i].T.z1=='False':
             s+='Допустимых решений нет'
@@ -297,8 +307,21 @@ def print_short_Res(Res, ab):
             for j in range(len(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis)):
                 s+='x'+str(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis[j])+'='+str((Res[i].simplex_table[len(Res[i].simplex_table)-1].b[j]))+', '
             s=s[:-2]
-            s+='); F='+str(Res[i].simplex_table[len(Res[i].simplex_table)-1].F)+';'
+            s+='); F='+str(simplify(Res[i].simplex_table[len(Res[i].simplex_table)-1].F))+';'
         print(s)
+
+    s=''
+    i=len(Res)-1
+    if Res[i].T.z1=='False':
+        s+='Допустимых решений нет'
+    else:
+        s+=str(Res[i].T.a)+' '+str(Res[i].T.z1)+' t '+str(Res[i].T.z2) +' '+str(ab[1])+'; '
+        s+='('
+        for j in range(len(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis)):
+            s+='x'+str(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis[j])+'='+str((Res[i].simplex_table[len(Res[i].simplex_table)-1].b[j]))+', '
+        s=s[:-2]
+        s+='); F='+str(simplify(Res[i].simplex_table[len(Res[i].simplex_table)-1].F))+';'
+    print(s)
 
 def init(z, a_eq, b_eq, a_ub, b_ub):
     for i in range(len(z)):
@@ -316,7 +339,7 @@ def init(z, a_eq, b_eq, a_ub, b_ub):
     return z, a_eq, b_eq, a_ub, b_ub
 
 def interval_t(simplex_table, ab):
-    z=copy.deepcopy(simplex_table[len(simplex_table)-1].z)
+    z=copy.deepcopy(simplex_table[len(simplex_table)-1].z)+copy.deepcopy(simplex_table[len(simplex_table)-1].b)
     t_result=T_Res()
     for i in range(len(z)):
         z[i]=str(z[i])+'+0*t>=0'
