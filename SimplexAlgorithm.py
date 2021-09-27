@@ -251,7 +251,7 @@ def print_table(simplex_table):
     table= PrettyTable()
     x=[]
     for i in range(len(simplex_table[0].x)):
-        x.append('x'+str(i))
+        x.append('x'+str(i+1))
     row=['Базис ', 'Решение']+x+['min '] 
     table.field_names=row
     for i in range(len(simplex_table)):
@@ -261,7 +261,7 @@ def print_table(simplex_table):
         for j in range(len(simplex_table[0].x)):
             row.append(str(simplify(simplex_table[i].z[j])))
         for j in range(len(simplex_table[0].b)):
-            main_row.append('x'+str(simplex_table[i].bazis[j]))
+            main_row.append('x'+str(simplex_table[i].bazis[j] +1))
             main_row.append(simplify(simplex_table[i].b[j]))
             for q in range(len(simplex_table[0].x)):
                 main_row.append(simplify(simplex_table[i].x[q][j]))
@@ -293,7 +293,7 @@ def print_short_Res(Res, ab):
         s+=str(ab[0])+' '+str(Res[i].T.z1)+' t '+str(Res[i].T.z2) +' '+str(Res[i].T.b)+'; '
         s+='('
         for j in range(len(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis)):
-            s+='x'+str(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis[j])+'='+str((Res[i].simplex_table[len(Res[i].simplex_table)-1].b[j]))+', '
+            s+='x'+str(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis[j]+1)+'='+str((Res[i].simplex_table[len(Res[i].simplex_table)-1].b[j]))+', '
         s=s[:-2]
         s+='); F='+str(simplify(Res[i].simplex_table[len(Res[i].simplex_table)-1].F))+';'
     print(s)
@@ -305,7 +305,7 @@ def print_short_Res(Res, ab):
             s+=str(Res[i].T.a)+' '+str(Res[i].T.z1)+' t '+str(Res[i].T.z2) +' '+str(Res[i].T.b)+'; '
             s+='('
             for j in range(len(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis)):
-                s+='x'+str(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis[j])+'='+str((Res[i].simplex_table[len(Res[i].simplex_table)-1].b[j]))+', '
+                s+='x'+str(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis[j]+1)+'='+str((Res[i].simplex_table[len(Res[i].simplex_table)-1].b[j]))+', '
             s=s[:-2]
             s+='); F='+str(simplify(Res[i].simplex_table[len(Res[i].simplex_table)-1].F))+';'
         print(s)
@@ -318,7 +318,7 @@ def print_short_Res(Res, ab):
         s+=str(Res[i].T.a)+' '+str(Res[i].T.z1)+' t '+str(Res[i].T.z2) +' '+str(ab[1])+'; '
         s+='('
         for j in range(len(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis)):
-            s+='x'+str(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis[j])+'='+str((Res[i].simplex_table[len(Res[i].simplex_table)-1].b[j]))+', '
+            s+='x'+str(Res[i].simplex_table[len(Res[i].simplex_table)-1].bazis[j]+1)+'='+str((Res[i].simplex_table[len(Res[i].simplex_table)-1].b[j]))+', '
         s=s[:-2]
         s+='); F='+str(simplify(Res[i].simplex_table[len(Res[i].simplex_table)-1].F))+';'
     print(s)
