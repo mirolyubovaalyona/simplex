@@ -1,6 +1,3 @@
-import scipy
-from scipy.optimize import linprog
-import numpy as np
 import copy
 import sympy
 from sympy import *
