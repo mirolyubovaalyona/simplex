@@ -1,10 +1,10 @@
+
 import scipy
 from scipy.optimize import linprog
 import numpy as np
 import sympy
 from sympy import *
 from sympy.solvers import solve
-import copy
 
 
 import SimplexAlgorithm
@@ -13,48 +13,71 @@ import SimplexAlgorithm
 t = Symbol('t')
 
 
-###############################################################################3
-class Table():
-    b=[]
-    x=[]
-    z=[]
-    bazis=[]
-    min=[]
-    F=0
+print("пример 2.60")
+ab=[-float("inf"),  float("inf")] #промежуток t
+z=[6, 0, 4+t, 12-t, 0] #тут хрвняться выражения перед иксами в функции
+a_eq=[[1, -1, 1, 0, 0],
+     [-1, 3, 0, 1, 0],
+     [-1/2, 2, 0, 0, 1]]#коэффициенты из ограничений-равенств 
+b_eq=[28, 20, 24] 
+a_ub=[] #коэффициенты из ограничений-неравенств
+b_ub=[]
 
-s=Table()
-s.bazis=[3, 4, 5]
-s.b=[-33, -23, -12]
-s.x=[[-4, -3, -1],
-     [-3, -2, -1],
-     [-2, -1, -2],
-     [1, 0, 0],
-     [0, 1,0],
-     [0, 0, 1]]
-s.z=[-20, -20, -10, 0, 0, 0]
-s.min=[-0, -0, -0]
-
-#table, y=SimplexAlgorithm.minus_b(s, 0)
-
-#ss=[]
-#ss.append(table)
-#SimplexAlgorithm.print_table(ss)
-
-#симплекс метод без параметра
-ab=[0,  10] #промежуток t
-z=[2, 13] #тут хрвняться выражения перед иксами в функции
-a_eq=[] #коэффициенты из ограничений-равенств 
-b_eq=[] 
-a_ub=[[4, 1], [2, 2], [6, 3]] #коэффициенты из ограничений-неравенств
-b_ub=[16, 22, 36]
+#работает
+Simplex_Res=SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
+SimplexAlgorithm.print_Res(Simplex_Res)
+print('Результат :')
+SimplexAlgorithm.print_short_Res(Simplex_Res, ab)
 
 
-z, a_eq, b_eq, a_ub, b_ub=SimplexAlgorithm.init(z, a_eq, b_eq, a_ub, b_ub)
-simplex_table=[]
-table=SimplexAlgorithm.build_simplex_table(z, a_eq, b_eq, a_ub, b_ub)
-simplex_table.append(table)
-ti=0
-s, y=copy.deepcopy(SimplexAlgorithm.simplex(simplex_table,ti))
-SimplexAlgorithm. print_table(s)
 
+
+print("пример 2.69")
+ab=[-float("inf"),  float("inf")] #промежуток t
+z=[-(1-t), 4-t, -(2-t), 2-t, -(3-2*t)] #тут хрвняться выражения перед иксами в функции
+a_eq=[[1, 1, 1, 1, 0],
+     [-2, 1, -1, 0, 1]]#коэффициенты из ограничений-равенств 
+b_eq=[2, 1] 
+a_ub=[] #коэффициенты из ограничений-неравенств
+b_ub=[]
+
+#работает
+Simplex_Res=SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
+SimplexAlgorithm.print_Res(Simplex_Res)
+print('Результат :')
+SimplexAlgorithm.print_short_Res(Simplex_Res, ab)
+
+
+
+print("пример 2.70")
+ab=[-float("inf"),  float("inf")] #промежуток t
+z=[6, 0, -(4+t), 12-t, 0] #тут хрвняться выражения перед иксами в функции
+a_eq=[[1, -1, 1, 0, 0],
+     [-1, 3, 0, 1, 0],
+     [-1/2, 2, 0, 0, 1]]#коэффициенты из ограничений-равенств 
+b_eq=[28, 20, 24] 
+a_ub=[] #коэффициенты из ограничений-неравенств
+b_ub=[]
+
+#работает
+Simplex_Res=SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
+SimplexAlgorithm.print_Res(Simplex_Res)
+print('Результат :')
+SimplexAlgorithm.print_short_Res(Simplex_Res, ab)
+
+print("пример 2.71")
+ab=[-float("inf"),  float("inf")] #промежуток t
+z=[2, 5, 0, 0, 0] #тут хрвняться выражения перед иксами в функции
+a_eq=[[1, -2, 1, 0, 0],
+     [-2, 1, 0, 1, 0],
+     [3, -1, 0, 0, 1]]#коэффициенты из ограничений-равенств 
+b_eq=[4+2*t, 6+t, 8-3*t] 
+a_ub=[] #коэффициенты из ограничений-неравенств
+b_ub=[]
+
+#работает
+Simplex_Res=SimplexAlgorithm.ParameterInSimplex(ab, z, a_eq, b_eq, a_ub, b_ub)
+SimplexAlgorithm.print_Res(Simplex_Res)
+print('Результат :')
+SimplexAlgorithm.print_short_Res(Simplex_Res, ab)
  

@@ -181,6 +181,14 @@ def simplex(simplex_t,ti):
         if minmin.subs(t, ti)>simplex_table.min[i].subs(t, ti):
             minmin=simplex_table.min[i]
             i_minmin=i
+    
+    u=0
+    for i in range(len(simplex_table.min)):
+        if simplex_table.min[i]!=float("inf"):
+            u=1
+    if u==0:
+            return simplex_t, 1
+
 
     #постоегие новой таблицы
     new_table=copy.deepcopy(simplex_table)
